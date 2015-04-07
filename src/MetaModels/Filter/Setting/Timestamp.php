@@ -18,6 +18,7 @@
 
 namespace MetaModels\Filter\Setting;
 
+use MetaModels\Attribute\IAttribute;
 use MetaModels\Filter\IFilter;
 use MetaModels\Filter\Rules\Comparing\GreaterThan;
 use MetaModels\Filter\Rules\Comparing\LessThan;
@@ -73,61 +74,16 @@ class Timestamp extends SimpleLookup
 
         if ($objAttribute && $strParamName && $arrParamValue && ($arrParamValue[0] || $arrParamValue[1])) {
             if ($this->get('mode') == 'groups') {
-                $strMore = $this->get('moreequal') ? '>=' : '>';
-                $strLess = $this->get('lessequal') ? '<=' : '<';
-
-                $arrQuery  = array();
-                $arrParams = array();
-                if ($arrParamValue[0]) {
-                    $arrQuery[]  = sprintf(
-                        '(EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(%s)) %s EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(?)))',
-                        $objAttribute->getColName(),
-                        $strLess
-                    );
-                    $arrParams[] = $arrParamValue[0];
-
-                    if ($this->get('tofield')) {
-                        $arrQuery[]  = sprintf(
-                            '(EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(%s)) %s EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(?)))',
-                            $objAttribute2->getColName(),
-                            $strMore
-                        );
-                        $arrParams[] = $arrParamValue[0];
-                    }
-                }
-
-                $objFilter->addFilterRule(
-                    new SimpleQuery(
-                        sprintf('SELECT id FROM %s WHERE ', $this->getMetaModel()->getTableName()) . implode(
-                            ' AND ',
-                            $arrQuery
-                        ),
-                        $arrParams
-                    )
-                );
+                $this->handleGroupMode($objFilter, $arrParamValue, $objAttribute, $objAttribute2);
             }
 
             if ($this->get('mode') == 'datepicker') {
-                if ($arrParamValue[0]) {
-
-                    // timestamp aus date
-                    $objDate = new \Date($arrParamValue[0], $GLOBALS['TL_CONFIG']['dateFormat']);
-                    $objFilter->addFilterRule(
-                        new LessThan($objAttribute, $objDate->tstamp, (bool) $this->get('moreequal'))
-                    );
-                }
-
-                if ($arrParamValue[1]) {
-                    // timestamp aus date
-                    $objDate = new \Date($arrParamValue[1], $GLOBALS['TL_CONFIG']['dateFormat']);
-                    $objFilter->addFilterRule(
-                        new GreaterThan($objAttribute2, $objDate->tstamp, (bool) $this->get('lessequal'))
-                    );
-                }
+                $this->handleDatePickerMode($objFilter, $arrParamValue, $objAttribute, $objAttribute2);
             }
 
             return;
         }
+
         $objFilter->addFilterRule(new StaticIdList(null));
     }
 
@@ -285,5 +241,93 @@ class Timestamp extends SimpleLookup
         }
 
         return array($objAttribute->getColName());
+    }
+
+    /**
+     * Create the filter rules for "datepicker" mode.
+     *
+     * @param IFilter    $filter     The filter to add the rules to.
+     *
+     * @param array      $value      The filter values.
+     *
+     * @param IAttribute $attribute  The first attribute.
+     *
+     * @param IAttribute $attribute2 The second attribute.
+     *
+     * @return void
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
+     * @SuppressWarnings(PHPMD.CamelCaseVariableName)
+     */
+    private function handleDatePickerMode(IFilter $filter, $value, $attribute, $attribute2)
+    {
+        if ($value[0]) {
+
+            // timestamp aus date
+            $objDate = new \Date($value[0], $GLOBALS['TL_CONFIG']['dateFormat']);
+            $filter->addFilterRule(
+                new LessThan($attribute, $objDate->tstamp, (bool) $this->get('moreequal'))
+            );
+        }
+
+        if ($value[1]) {
+            // timestamp aus date
+            $objDate = new \Date($value[1], $GLOBALS['TL_CONFIG']['dateFormat']);
+            $filter->addFilterRule(
+                new GreaterThan($attribute2, $objDate->tstamp, (bool) $this->get('lessequal'))
+            );
+        }
+    }
+
+    /**
+     * Create the filter rules for "group" mode.
+     *
+     * @param IFilter    $filter     The filter to add the rules to.
+     *
+     * @param array      $value      The filter values.
+     *
+     * @param IAttribute $attribute  The first attribute.
+     *
+     * @param IAttribute $attribute2 The second attribute.
+     *
+     * @return void
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
+     * @SuppressWarnings(PHPMD.CamelCaseVariableName)
+     */
+    private function handleGroupMode(IFilter $filter, $value, $attribute, $attribute2)
+    {
+        $strMore = $this->get('moreequal') ? '>=' : '>';
+        $strLess = $this->get('lessequal') ? '<=' : '<';
+
+        $arrQuery  = array();
+        $arrParams = array();
+        if ($value[0]) {
+            $arrQuery[]  = sprintf(
+                '(EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(%s)) %s EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(?)))',
+                $attribute->getColName(),
+                $strLess
+            );
+            $arrParams[] = $value[0];
+
+            if ($this->get('tofield')) {
+                $arrQuery[]  = sprintf(
+                    '(EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(%s)) %s EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(?)))',
+                    $attribute2->getColName(),
+                    $strMore
+                );
+                $arrParams[] = $value[0];
+            }
+        }
+
+        $filter->addFilterRule(
+            new SimpleQuery(
+                sprintf('SELECT id FROM %s WHERE ', $this->getMetaModel()->getTableName()) . implode(
+                    ' AND ',
+                    $arrQuery
+                ),
+                $arrParams
+            )
+        );
     }
 }
