@@ -11,6 +11,7 @@
  * @package    MetaModels
  * @subpackage Filtertimestamp
  * @author     Henry Lamorski <henry.lamorski@mailbox.org>
+ * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @license    LGPL.
  * @filesource
  */
@@ -18,6 +19,8 @@
 namespace MetaModels\Filter\Setting;
 
 use MetaModels\Filter\IFilter;
+use MetaModels\Filter\Rules\Comparing\GreaterThan;
+use MetaModels\Filter\Rules\Comparing\LessThan;
 use MetaModels\Filter\Rules\SimpleQuery;
 use MetaModels\Filter\Rules\StaticIdList;
 use MetaModels\FrontendIntegration\FrontendFilterOptions;
@@ -40,6 +43,8 @@ class Timestamp extends SimpleLookup
         if ($objAttribute) {
             return $objAttribute->getColName();
         }
+
+        return null;
     }
 
     /**
@@ -67,13 +72,12 @@ class Timestamp extends SimpleLookup
         }
 
         if ($objAttribute && $strParamName && $arrParamValue && ($arrParamValue[0] || $arrParamValue[1])) {
-            $strMore = $this->get('moreequal') ? '>=' : '>';
-            $strLess = $this->get('lessequal') ? '<=' : '<';
-
-            $arrQuery  = array();
-            $arrParams = array();
-
             if ($this->get('mode') == 'groups') {
+                $strMore = $this->get('moreequal') ? '>=' : '>';
+                $strLess = $this->get('lessequal') ? '<=' : '<';
+
+                $arrQuery  = array();
+                $arrParams = array();
                 if ($arrParamValue[0]) {
                     $arrQuery[]  = sprintf(
                         '(EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(%s)) %s EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(?)))',
@@ -91,33 +95,36 @@ class Timestamp extends SimpleLookup
                         $arrParams[] = $arrParamValue[0];
                     }
                 }
+
+                $objFilter->addFilterRule(
+                    new SimpleQuery(
+                        sprintf('SELECT id FROM %s WHERE ', $this->getMetaModel()->getTableName()) . implode(
+                            ' AND ',
+                            $arrQuery
+                        ),
+                        $arrParams
+                    )
+                );
             }
 
             if ($this->get('mode') == 'datepicker') {
                 if ($arrParamValue[0]) {
+
                     // timestamp aus date
-                    $objDate     = new \Date($arrParamValue[0], $GLOBALS['TL_CONFIG']['dateFormat']);
-                    $arrQuery[]  = sprintf('(%s%s?)', $objAttribute->getColName(), $strMore);
-                    $arrParams[] = $objDate->tstamp;
+                    $objDate = new \Date($arrParamValue[0], $GLOBALS['TL_CONFIG']['dateFormat']);
+                    $objFilter->addFilterRule(
+                        new LessThan($objAttribute, $objDate->tstamp, (bool) $this->get('moreequal'))
+                    );
                 }
 
                 if ($arrParamValue[1]) {
                     // timestamp aus date
-                    $objDate     = new \Date($arrParamValue[1], $GLOBALS['TL_CONFIG']['dateFormat']);
-                    $arrQuery[]  = sprintf('(%s%s?)', $objAttribute2->getColName(), $strLess);
-                    $arrParams[] = $objDate->tstamp;
+                    $objDate = new \Date($arrParamValue[1], $GLOBALS['TL_CONFIG']['dateFormat']);
+                    $objFilter->addFilterRule(
+                        new GreaterThan($objAttribute2, $objDate->tstamp, (bool) $this->get('lessequal'))
+                    );
                 }
             }
-
-            $objFilter->addFilterRule(
-                new SimpleQuery(
-                    sprintf('SELECT id FROM %s WHERE ', $this->getMetaModel()->getTableName()) . implode(
-                        ' AND ',
-                        $arrQuery
-                    ),
-                    $arrParams
-                )
-            );
 
             return;
         }
