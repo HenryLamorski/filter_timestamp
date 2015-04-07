@@ -22,7 +22,6 @@ use MetaModels\Attribute\IAttribute;
 use MetaModels\Filter\IFilter;
 use MetaModels\Filter\Rules\Comparing\GreaterThan;
 use MetaModels\Filter\Rules\Comparing\LessThan;
-use MetaModels\Filter\Rules\SimpleQuery;
 use MetaModels\Filter\Rules\StaticIdList;
 use MetaModels\FrontendIntegration\FrontendFilterOptions;
 
@@ -297,37 +296,19 @@ class Timestamp extends SimpleLookup
      */
     private function handleGroupMode(IFilter $filter, $value, $attribute, $attribute2)
     {
-        $strMore = $this->get('moreequal') ? '>=' : '>';
-        $strLess = $this->get('lessequal') ? '<=' : '<';
-
-        $arrQuery  = array();
-        $arrParams = array();
-        if ($value[0]) {
-            $arrQuery[]  = sprintf(
-                '(EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(%s)) %s EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(?)))',
-                $attribute->getColName(),
-                $strLess
-            );
-            $arrParams[] = $value[0];
-
-            if ($this->get('tofield')) {
-                $arrQuery[]  = sprintf(
-                    '(EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(%s)) %s EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(?)))',
-                    $attribute2->getColName(),
-                    $strMore
-                );
-                $arrParams[] = $value[0];
-            }
+        if (empty($value[0])) {
+            return;
         }
 
+        $date = new \Date($value[0]);
         $filter->addFilterRule(
-            new SimpleQuery(
-                sprintf('SELECT id FROM %s WHERE ', $this->getMetaModel()->getTableName()) . implode(
-                    ' AND ',
-                    $arrQuery
-                ),
-                $arrParams
-            )
+            new LessThan($attribute, $date->monthBegin, (bool) $this->get('lessequal'))
         );
+
+        if ($this->get('tofield')) {
+            $filter->addFilterRule(
+                new GreaterThan($attribute2, $date->monthEnd, (bool) $this->get('moreequal'))
+            );
+        }
     }
 }
