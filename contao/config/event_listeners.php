@@ -8,7 +8,6 @@
  * PHP version 5
  * @package    MetaModels
  * @subpackage Filtertimestamp
- * @author     Henry Lamorski <henry.lamorski@mailbox.org>
  * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @license    LGPL.
  * @filesource

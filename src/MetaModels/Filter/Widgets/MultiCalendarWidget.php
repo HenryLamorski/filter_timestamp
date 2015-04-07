@@ -10,6 +10,7 @@
  * @package    MetaModels
  * @subpackage FrontendFilter
  * @author     Henry Lamorski <henry.lamorski@mailbox.org>
+ * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @copyright  The MetaModels team.
  * @license    LGPL.
  * @filesource

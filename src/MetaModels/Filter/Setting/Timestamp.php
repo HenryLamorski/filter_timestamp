@@ -88,6 +88,9 @@ class Timestamp extends SimpleLookup
 
     /**
      * {@inheritdoc}
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
+     * @SuppressWarnings(PHPMD.CamelCaseVariableName)
      */
     public function getParameterFilterWidgets(
         $arrIds,

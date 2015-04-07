@@ -10,7 +10,6 @@
  * @package    MetaModels
  * @subpackage Filtertimestamp
  * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
- * @author     Henry Lamorski <henry.lamorski@mailbox.org>
  * @license    LGPL.
  * @filesource
  */
