@@ -6,6 +6,7 @@
  * data in each collection.
  *
  * PHP version 5
+ *
  * @package    MetaModels
  * @subpackage FrontendFilter
  * @author     Henry Lamorski <henry.lamorski@mailbox.org>
@@ -17,110 +18,114 @@
 namespace MetaModels\Filter\Widgets;
 
 /**
- * Datepicker-Form field with more than 1 input, based on MultiInputWidget from Christian de la Haye <service@delahaye.de>  and form field by Leo Feyer
+ * Datepicker-Form field with more than 1 input.
  *
- * @package	   MetaModels
- * @subpackage FrontendFilter
- * @author     Henry Lamorski <henry.lamorski@mailbox.org>
+ * Based on MultiInputWidget from Christian de la Haye <service@delahaye.de>  and form field by Leo Feyer.
+ *
+ * @package       MetaModels
+ * @subpackage    FrontendFilter
+ * @author        Henry Lamorski <henry.lamorski@mailbox.org>
  */
 class MultiCalendarWidget extends \Widget
 {
-	/**
-	 * Submit user input.
-	 *
-	 * @var boolean
-	 */
-	protected $blnSubmitInput = true;
 
-	/**
-	 * The template to use.
-	 *
-	 * @var string
-	 */
-	protected $strTemplate = 'form_widget';
+    /**
+     * Submit user input.
+     *
+     * @var boolean
+     */
+    protected $blnSubmitInput = true;
 
-	/**
-	 * Add specific attributes.
-	 *
-	 * @param string $strKey   Name of the key to set.
-	 *
-	 * @param mixed  $varValue The value to use.
-	 *
-	 * @return void
-	 */
-	public function __set($strKey, $varValue)
-	{
+    /**
+     * The template to use.
+     *
+     * @var string
+     */
+    protected $strTemplate = 'form_widget';
 
-		$this->arrAttributes['maxlength'] =  10;
+    /**
+     * Add specific attributes.
+     *
+     * @param string $strKey   Name of the key to set.
+     *
+     * @param mixed  $varValue The value to use.
+     *
+     * @return void
+     */
+    public function __set($strKey, $varValue)
+    {
 
-		switch ($strKey)
-		{
-			
-			case 'dateImage':
-				$this->arrAttributes['dateImage'] = $varValue;
-				break;
+        $this->arrAttributes['maxlength'] = 10;
 
-			case 'placeholder':
-				$this->arrAttributes['placeholder'] = $varValue;
-			break;
-			
+        switch ($strKey) {
 
-			default:
-				parent::__set($strKey, $varValue);
-				break;
-		}
-	}
+            case 'dateImage':
+                $this->arrAttributes['dateImage'] = $varValue;
+                break;
 
-	/**
-	 * Trim the values and validate them.
-	 *
-	 * @param mixed $varInput The value to process.
-	 *
-	 * @return mixed The processed value
-	 */
-	protected function validator($varInput)
-	{
-		if (is_array($varInput))
-		{
-			return parent::validator($varInput);
-		}
+            case 'placeholder':
+                $this->arrAttributes['placeholder'] = $varValue;
+                break;
 
-		return parent::validator(trim($varInput));
-	}
+            default:
+                parent::__set($strKey, $varValue);
+                break;
+        }
+    }
 
+    /**
+     * Trim the values and validate them.
+     *
+     * @param mixed $varInput The value to process.
+     *
+     * @return mixed The processed value
+     */
+    protected function validator($varInput)
+    {
+        if (is_array($varInput)) {
+            return parent::validator($varInput);
+        }
 
-	/**
-	 * Generate the widget and return it as string.
-	 *
-	 * @return string
-	 */
-	public function generate()
-	{
-	
-		$blnV3 = version_compare(VERSION, '3.0', '>=');
-	        $GLOBALS['TL_CSS'][] = $blnV3 ? 'assets/mootools/datepicker/'.DATEPICKER.'/dashboard.css' : 'plugins/datepicker/dashboard.css';
-                $GLOBALS['TL_JAVASCRIPT'][] = $blnV3 ? 'assets/mootools/datepicker/'.DATEPICKER.'/datepicker.js' : 'plugins/datepicker/datepicker.js';
-	        $dateFormat = strlen($this->dateFormat) ? $this->dateFormat : $GLOBALS['TL_CONFIG'][$this->rgxp . 'Format'];
-	        $dateDirection = strlen($this->dateDirection) ? $this->dateDirection : '0';
-	        $jsEvent = $this->jsevent ? $this->jsevent : 'domready';
+        return parent::validator(trim($varInput));
+    }
 
-	        if ($this->dateParseValue && $this->varValue != '') {
-	            $this->varValue = $this->parseDate($dateFormat, strtotime($this->varValue));
-	        }
+    /**
+     * Generate the widget and return it as string.
+     *
+     * @return string
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
+     * @SuppressWarnings(PHPMD.CamelCaseVariableName)
+     */
+    public function generate()
+    {
 
-	      $GLOBALS['TL_HEAD'][] = $this->getDateString();
-		
-		 // Initialize the default config
-	        $arrConfig = array(
-            'draggable'            => (($this->draggable) ? "'true'" : "'false'"),
-            'pickerClass'        => "'datepicker_dashboard'",
-            'useFadeInOut'        => "'!Browser.ie'",
-            'startDay'            => $GLOBALS['TL_LANG']['MSC']['weekOffset'],
-            'titleFormat'        => "'{$GLOBALS['TL_LANG']['MSC']['titleFormat']}'",
+        $GLOBALS['TL_CSS'][]        = 'assets/mootools/datepicker/' . DATEPICKER . '/dashboard.css';
+        $GLOBALS['TL_JAVASCRIPT'][] = 'assets/mootools/datepicker/' . DATEPICKER . '/datepicker.js';
+        $dateFormat                 = strlen(
+            $this->dateFormat
+        ) ? $this->dateFormat : $GLOBALS['TL_CONFIG'][$this->rgxp . 'Format'];
+        $dateDirection              = strlen($this->dateDirection) ? $this->dateDirection : '0';
+        $jsEvent                    = $this->jsevent ? $this->jsevent : 'domready';
+
+        if ($this->dateParseValue && $this->varValue != '') {
+            $this->varValue = \Date::parse($dateFormat, strtotime($this->varValue));
+        }
+
+        $GLOBALS['TL_HEAD'][] = $this->getDateString();
+
+        // Initialize the default config
+        $arrConfig = array(
+            'draggable'    => (($this->draggable) ? "'true'" : "'false'"),
+            'pickerClass'  => "'datepicker_dashboard'",
+            'useFadeInOut' => "'!Browser.ie'",
+            'startDay'     => $GLOBALS['TL_LANG']['MSC']['weekOffset'],
+            'titleFormat'  => sprintf('\'%s\'', $GLOBALS['TL_LANG']['MSC']['titleFormat']),
         );
 
-        switch ($this->rgxp) {
+        $arrConfigSeparate = array();
 
+        switch ($this->rgxp) {
             case 'datim':
                 $arrConfig['timePicker'] = 'true';
                 break;
@@ -128,33 +133,46 @@ class MultiCalendarWidget extends \Widget
             case 'time':
                 $arrConfig['pickOnly'] = 'time';
                 break;
+            default:
         }
 
         switch ($dateDirection) {
-
             case '+0':
-                $arrConfig['minDate'] = 'new Date(' . date('Y') . ', ' . (date('n')-1) . ', ' . date('j') . ')';
+                $arrConfig['minDate'] = sprintf(
+                    'new Date(%s, %s, %s)',
+                    date('Y'),
+                    (date('n') - 1),
+                    date('j')
+                );
                 break;
-
             case '+1':
-                $time = strtotime('+1 day');
-                $arrConfig['minDate'] = 'new Date(' . date('Y', $time) . ', ' . (date('n', $time)+1) . ', ' . date('j', $time) . ')';
+                $time                 = strtotime('+1 day');
+                $arrConfig['minDate'] = sprintf(
+                    'new Date(%s, %s, %s)',
+                    date('Y', $time),
+                    (date('n', $time) + 1),
+                    date('j', $time)
+                );
                 break;
-
             case '-1':
-                $time = strtotime('-1 day');
-                $arrConfig['maxDate'] = 'new Date(' . date('Y', $time) . ', ' . (date('n', $time)-1) . ', ' . date('j', $time) . ')';
+                $time                 = strtotime('-1 day');
+                $arrConfig['maxDate'] = sprintf(
+                    'new Date(%s, %s, %s)',
+                    date('Y', $time),
+                    (date('n', $time) - 1),
+                    date('j', $time)
+                );
                 break;
+            default:
         }
 
         // default Offset
         $intOffsetX = 0;
         $intOffsetY = 0;
 
-	
         if ($this->arrAttributes['dateImage']) {
             // icon
-            $strIcon = $blnV3 ? 'assets/mootools/datepicker/'.DATEPICKER.'/icon.gif' : 'plugins/datepicker/icon.gif';
+            $strIcon = 'assets/mootools/datepicker/' . DATEPICKER . '/icon.gif';
 
             if ($this->dateImageSRC) {
                 if (is_numeric($this->dateImageSRC)) {
@@ -168,13 +186,11 @@ class MultiCalendarWidget extends \Widget
                 }
             }
 
-            $arrSize = @getimagesize(TL_ROOT . '/' . $strIcon);
+            $arrSize = getimagesize(TL_ROOT . '/' . $strIcon);
 
-           
-	    for ($i = 0; $i < $this->size; $i++)
-	    {
-		$arrConfigSeperate[$i]['toggle'] = "$$('#toggle_" . $this->name . "_".$i . "')";
-	    }
+            for ($i = 0; $i < $this->size; $i++) {
+                $arrConfigSeparate[$i]['toggle'] = sprintf('$$(\'#toggle_%s_%s\')', $this->name, $i);
+            }
 
             if ($this->dateImageOnly) {
                 $arrConfig['togglesOnly'] = 'false';
@@ -185,81 +201,87 @@ class MultiCalendarWidget extends \Widget
             $intOffsetY = -182;
         }
 
-	// make offsets configurable (useful for the front end but can be used in the back end as well)
-        $intOffsetX = (is_numeric($this->offsetX)) ? $this->offsetX : $intOffsetX;
-        $intOffsetY = (is_numeric($this->offsetY)) ? $this->offsetY : $intOffsetY;
+        // make offsets configurable (useful for the front end but can be used in the back end as well)
+        $intOffsetX                  = (is_numeric($this->offsetX)) ? $this->offsetX : $intOffsetX;
+        $intOffsetY                  = (is_numeric($this->offsetY)) ? $this->offsetY : $intOffsetY;
         $arrConfig['positionOffset'] = '{x:' . $intOffsetX . ',y:' . $intOffsetY . '}';
 
         // correctly style the date format
-	$objDate  = new \Date($StrDateVal, $GLOBALS['TL_CONFIG']['dateFormat']);
+        $objDate             = new \Date(null, $GLOBALS['TL_CONFIG']['dateFormat']);
         $arrConfig['format'] = "'" . $objDate->formatToJs($dateFormat) . "'";
 
-	$arrCompiledConfig = array();
-	$arrCompiledConfigSeperate = array();
+        $arrCompiledConfig         = array();
+        $arrCompiledConfigSeparate = array();
 
-	// compile Mootools calendar configs global 
-	foreach ($arrConfig as $k => $v) {
-        	    $arrCompiledConfig[] = "    '" . $k . "': " . $v;
+        // compile Mootools calendar configs global
+        foreach ($arrConfig as $k => $v) {
+            $arrCompiledConfig[] = "    '" . $k . "': " . $v;
         }
 
-	// compile Mootools calendar configs for each calender seperate
-	for ($i = 0; $i < $this->size; $i++)
-	{
-        	foreach ($arrConfigSeperate[$i] as $k => $v) {
-        	    $arrCompiledConfigSeperate[$i][] = "    '" . $k . "': " . $v;
-	        }
-	}
+        // compile Mootools calendar configs for each calender seperate
+        for ($i = 0; $i < $this->size; $i++) {
+            foreach ($arrConfigSeparate[$i] as $k => $v) {
+                $arrCompiledConfigSeparate[$i][] = "    '" . $k . "': " . $v;
+            }
+        }
 
-	// init/create Javascript Buffer
-	$strBuffer .= '' . $this->getScriptTag() . " 
-			window.addEvent('" . $jsEvent . "', function() {";
+        // init/create Javascript Buffer
+        $strBuffer = '' . $this->getScriptTag() . '
+window.addEvent(\'' . $jsEvent . '\', function() {';
 
-	// init HTML Input Buffer
-	$return = '';
+        // init HTML Input Buffer
+        $return = '';
 
-	
-	for ($i = 0; $i < $this->size; $i++)
-	{
+        for ($i = 0; $i < $this->size; $i++) {
 
-		
-		$return .= '<span class="wrapper item'.$i.'">';
-		$return .= sprintf('<input type="%s" name="%s[]" placeholder="%s" id="ctrl_%s_%s" class="text%s%s" value="%s"%s%s',
-				'text',
-				$this->strName,
-				$this->arrAttributes['placeholder'][$i],
-				$this->strId,
-				$i,
-				'',
-				(strlen($this->strClass) ? ' ' . $this->strClass : ''),
-				specialchars($this->varValue[$i]),
-				$this->getAttributes(),
-				$this->strTagEnding);
+            $return .= '<span class="wrapper item' . $i . '">';
+            $return .= sprintf(
+                '<input type="text" name="%s[]" placeholder="%s" id="ctrl_%s_%s" class="text%s" value="%s"%s%s',
+                $this->strName,
+                $this->arrAttributes['placeholder'][$i],
+                $this->strId,
+                $i,
+                (strlen($this->strClass) ? ' ' . $this->strClass : ''),
+                specialchars($this->varValue[$i]),
+                $this->getAttributes(),
+                $this->strTagEnding
+            );
+            if ($this->arrAttributes['dateImage']) {
+                $return .= sprintf(
+                    '<img src="%s" width="%d" height="%d" alt="" class="CalendarFieldIcon" id="toggle_%s_%s" />',
+                    $strIcon,
+                    $arrSize[0],
+                    $arrSize[1],
+                    $this->name,
+                    $i
+                );
+            }
 
-		$return .= ($this->arrAttributes['dateImage']) ?
-				'<img src="' . $strIcon . '" width="' . $arrSize[0] . 
-				'" height="' . $arrSize[1] . '" alt="" class="CalendarFieldIcon" id="toggle_' . 
-				$this->name . "_".$i . '"' . $style . '>' : '';
+            $return    .= '</span>';
+            $strBuffer .= sprintf(
+                'new Picker.Date($$(\'#ctrl_%s_%s\'), {%s' . ",\n" . ' });',
+                $this->name,
+                $i,
+                implode(",\n", $arrCompiledConfig),
+                implode(",\n", $arrCompiledConfigSeparate[$i])
+            );
+        }
 
-		$return .= '</span>';
-		$strBuffer .= "new Picker.Date($$('#ctrl_" . $this->name . "_".$i."'), {" . 
-			      implode(",\n", $arrCompiledConfig) .",\n" . 
-			      implode(",\n", $arrCompiledConfigSeperate[$i]) ." });";	
+        $strBuffer .= '});</script>';
 
-	}
-
-	$strBuffer .= "});</script>";
-
-
-	return $return.$strBuffer;
-	}
-
+        return $return . $strBuffer;
+    }
 
     /**
-     * Return the datepicker string
+     * Return the datepicker string.
      *
      * Fix the MooTools more parsers which incorrectly parse ISO-8601 and do
      * not handle German date formats at all.
+     *
      * @return string
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
+     * @SuppressWarnings(PHPMD.CamelCaseVariableName)
      */
     public function getDateString()
     {
@@ -283,14 +305,16 @@ window.addEvent("domready",function(){
 </script>';
     }
 
-
+    /**
+     * Retrieve the correct script tag.
+     *
+     * @return string
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
+     * @SuppressWarnings(PHPMD.CamelCaseVariableName)
+     */
     public function getScriptTag()
     {
-
-        global $objPage;
-
-        return $objPage->outputFormat == 'html' ? '<script>' : '<script type="text/javascript">';
+        return $GLOBALS['objPage']->outputFormat == 'html' ? '<script>' : '<script type="text/javascript">';
     }
-
-
 }
