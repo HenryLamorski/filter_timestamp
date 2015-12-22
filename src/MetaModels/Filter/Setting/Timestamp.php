@@ -22,6 +22,7 @@ use MetaModels\Attribute\IAttribute;
 use MetaModels\Filter\IFilter;
 use MetaModels\Filter\Rules\Comparing\GreaterThan;
 use MetaModels\Filter\Rules\Comparing\LessThan;
+use MetaModels\Filter\Rules\SimpleQuery;
 use MetaModels\Filter\Rules\StaticIdList;
 use MetaModels\FrontendIntegration\FrontendFilterOptions;
 
