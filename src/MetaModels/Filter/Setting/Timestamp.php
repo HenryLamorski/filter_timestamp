@@ -309,7 +309,7 @@ class Timestamp extends SimpleLookup
 		$arrQuery = array();
 		$arrParams = array();
 
-		$arrQuery[] = sprintf('(EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(%s)) %s EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(?)))', $objAttribute->getColName(), $strLess);
+		$arrQuery[] = sprintf('(EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(%s)) %s EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(?)))', $attribute->getColName(), $strLess);
 		$arrParams[] = $value;
 	
 		if ($this->get('tofield')) {
