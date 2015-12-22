@@ -118,7 +118,7 @@ class MultiCalendarWidget extends \Widget
         // Initialize the default config
         $arrConfig = array(
             'draggable'    => (($this->draggable) ? "'true'" : "'false'"),
-            'pickerClass'  => "'datepicker_dashboard'",
+            'pickerClass'  => "'datepicker_bootstrap'",
             'useFadeInOut' => "'!Browser.ie'",
             'startDay'     => $GLOBALS['TL_LANG']['MSC']['weekOffset'],
             'titleFormat'  => sprintf('\'%s\'', $GLOBALS['TL_LANG']['MSC']['titleFormat']),
