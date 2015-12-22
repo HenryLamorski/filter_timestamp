@@ -10,16 +10,12 @@
  * @package    MetaModels
  * @subpackage Filtertimestamp
  * @author     Henry Lamorski <henry.lamorski@mailbox.org>
+ * @author     Christian Schiffler <c.schiffler@cyberspectrum.de>
  * @license    LGPL.
  * @filesource
  */
 
 /**
- * Register the classes
+ * Frontend widgets
  */
-ClassLoader::addClasses(array
-(
-	'MetaModels\Filter\Setting\Timestamp' => 'system/modules/metamodelsfilter_timestamp/MetaModels/Filter/Setting/Timestamp.php',
-
-	'MetaModelFilterSettingTimestamp'     => 'system/modules/metamodelsfilter_timestamp/deprecated/MetaModelFilterSettingTimestamp.php',
-));
+$GLOBALS['TL_FFL']['multical'] = 'MetaModels\Filter\Widgets\MultiCalendarWidget';

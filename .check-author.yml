@@ -1,0 +1,5 @@
+exclude:
+  languages
+
+mapping:
+  "Henry Lamorski <henry.lamorski@mailbox.org>": "henry lamorski <henry.lamorski@mailbox.org>"
