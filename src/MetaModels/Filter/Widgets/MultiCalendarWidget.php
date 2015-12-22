@@ -101,7 +101,7 @@ class MultiCalendarWidget extends \Widget
     public function generate()
     {
 
-        $GLOBALS['TL_CSS'][]        = 'assets/mootools/datepicker/' . DATEPICKER . '/dashboard.css';
+        $GLOBALS['TL_CSS'][]        = 'assets/mootools/datepicker/' . DATEPICKER . '/datepicker.css';
         $GLOBALS['TL_JAVASCRIPT'][] = 'assets/mootools/datepicker/' . DATEPICKER . '/datepicker.js';
         $dateFormat                 = strlen(
             $this->dateFormat
