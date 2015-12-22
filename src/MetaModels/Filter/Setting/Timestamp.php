@@ -303,6 +303,25 @@ class Timestamp extends SimpleLookup
             return;
         }
 
+		$strMore = $this->get('moreequal') ? '>=' : '>';
+		$strLess = $this->get('lessequal') ? '<=' : '<';
+
+		$arrQuery = array();
+		$arrParams = array();
+
+		$arrQuery[] = sprintf('(EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(%s)) %s EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(?)))', $objAttribute->getColName(), $strLess);
+		$arrParams[] = $value;
+	
+		if ($this->get('tofield')) {
+			$arrQuery[] = sprintf('(EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(%s)) %s EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(?)))', $attribute2->getColName(), $strMore);
+			$arrParams[] = $value;
+		}
+
+		$filter->addFilterRule(
+			new SimpleQuery(
+				sprintf('SELECT id FROM %s WHERE ', $this->getMetaModel()->getTableName()) . implode(' AND ', $arrQuery), $arrParams)
+		);
+		/*
         $date = new \Date($value[0]);
         $filter->addFilterRule(
             new LessThan($attribute, $date->monthBegin, (bool) $this->get('lessequal'))
@@ -313,5 +332,6 @@ class Timestamp extends SimpleLookup
                 new GreaterThan($attribute2, $date->monthEnd, (bool) $this->get('moreequal'))
             );
         }
+		*/
     }
 }
