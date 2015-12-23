@@ -264,22 +264,49 @@ class Timestamp extends SimpleLookup
      */
     private function handleDatePickerMode(IFilter $filter, $value, $attribute, $attribute2)
     {
-        if ($value[0]) {
 
-            // timestamp aus date
-            $objDate = new \Date($value[0], $GLOBALS['TL_CONFIG']['dateFormat']);
-            $filter->addFilterRule(
-                new LessThan($attribute, $objDate->tstamp, (bool) $this->get('moreequal'))
-            );
-        }
+		if(!$value[0])
+			return;
 
-        if ($value[1]) {
-            // timestamp aus date
-            $objDate = new \Date($value[1], $GLOBALS['TL_CONFIG']['dateFormat']);
-            $filter->addFilterRule(
-                new GreaterThan($attribute2, $objDate->tstamp, (bool) $this->get('lessequal'))
+		if (!isset($value[1]))
+			$value[1] = $value[0];
+
+		// timestamp aus date
+		$objDate1 = new \Date($value[0], $GLOBALS['TL_CONFIG']['dateFormat']);
+		$objDate2 = new \Date($value[1], $GLOBALS['TL_CONFIG']['dateFormat']);
+
+		$strMore = $this->get('moreequal') ? '>=' : '>';
+		$strLess = $this->get('lessequal') ? '<=' : '<';
+
+		$arrQuery = array();
+		$arrParams = array();
+
+		if ($this->get('searchMode') == "fromto") {
+
+			$filter->addFilterRule(
+				new LessThan($attribute, $objDate1->tstamp, (bool) $this->get('moreequal'))
             );
-        }
+
+			$filter->addFilterRule(
+				new GreaterThan($attribute2, $objDate2->tstamp, (bool) $this->get('lessequal'))
+			);
+
+		} else {
+			// Rangequery
+			$arrQuery[] = sprintf("(((%s%s? AND %s%s?) OR (%s%s? AND %s%s?)) OR %s=0 OR %s=0)", $attribute->getColName(),$strMore, $attribute->getColName(), $strLess,$attribute2->getColName(),$strMore,$attribute2->getColName(),$strLess,$attribute->getColName(),$attribute2->getColName());							
+			$arrParams[] = $objDate1->tstamp;
+			$arrParams[] = $objDate2->tstamp;
+			$arrParams[] = $objDate1->tstamp;
+			$arrParams[] = $objDate2->tstamp;
+			$arrParams[] = $attribute->getColName();
+			$arrParams[] = $attribute2->getColName();
+
+			$filter->addFilterRule(
+				new SimpleQuery(
+					sprintf('SELECT id FROM %s WHERE ', $this->getMetaModel()->getTableName()) . implode(' AND ', $arrQuery), $arrParams)
+			);
+
+		}
     }
 
     /**
@@ -311,11 +338,11 @@ class Timestamp extends SimpleLookup
 		$arrParams = array();
 
 		$arrQuery[] = sprintf('(EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(%s)) %s EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(?)))', $attribute->getColName(), $strLess);
-		$arrParams[] = $value;
+		$arrParams[] = $value[0];
 	
 		if ($this->get('tofield')) {
 			$arrQuery[] = sprintf('(EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(%s)) %s EXTRACT(YEAR_MONTH FROM FROM_UNIXTIME(?)))', $attribute2->getColName(), $strMore);
-			$arrParams[] = $value;
+			$arrParams[] = $value[0];
 		}
 
 		$filter->addFilterRule(
