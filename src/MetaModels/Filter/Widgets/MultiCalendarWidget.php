@@ -171,7 +171,7 @@ class MultiCalendarWidget extends \Widget
         $intOffsetX = 0;
         $intOffsetY = 0;
 
-        if ($this->arrAttributes['dateImage']) {
+        if ($this->arrAttributes['dateImage'] ) {
             // icon
             $strIcon = 'assets/mootools/datepicker/' . DATEPICKER . '/icon.gif';
 
@@ -189,10 +189,6 @@ class MultiCalendarWidget extends \Widget
 
             $arrSize = getimagesize(TL_ROOT . '/' . $strIcon);
 
-            for ($i = 0; $i < $this->size; $i++) {
-                $arrConfigSeparate[$i]['toggle'] = sprintf('$$(\'#toggle_%s_%s\')', $this->name, $i);
-            }
-
             if ($this->dateImageOnly) {
                 $arrConfig['togglesOnly'] = 'false';
             }
@@ -201,6 +197,10 @@ class MultiCalendarWidget extends \Widget
             $intOffsetX = -197;
             $intOffsetY = -182;
         }
+
+
+		for ($i = 0; $i < $this->size; $i++)
+			$arrConfigSeparate[$i]['toggle'] = sprintf('$$(\'#toggle_%s_%s\')', $this->name, $i);
 
         // make offsets configurable (useful for the front end but can be used in the back end as well)
         $intOffsetX                  = (is_numeric($this->offsetX)) ? $this->offsetX : $intOffsetX;
@@ -247,7 +247,7 @@ window.addEvent(\'' . $jsEvent . '\', function() {';
                 $this->getAttributes(),
                 $this->strTagEnding
             );
-            if ($this->arrAttributes['dateImage']) {
+            if ($this->arrAttributes['dateImage'] ) {
                 $return .= sprintf(
                     '<img src="%s" width="%d" height="%d" alt="" class="CalendarFieldIcon" id="toggle_%s_%s" />',
                     $strIcon,
