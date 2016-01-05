@@ -210,7 +210,7 @@ class Timestamp extends SimpleLookup
                         (
                             'multiple'    => true,
                             'size'        => ($this->get('fromfield') && $this->get('tofield') ? 2 : 1),
-                            'dateImage'   => 1,
+                            'dateImage'   => 0,
                             'dateFormat'  => $GLOBALS['TL_CONFIG']['dateFormat'],
                             'urlparam'    => $this->get('urlparam'),
                             'template'    => $this->get('template'),
