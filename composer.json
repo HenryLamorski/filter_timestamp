@@ -15,13 +15,7 @@
     ],
     "require":{
         "php":">=5.3",
-        "contao/core": ">=3.2,<4.0",
-        "contao-community-alliance/composer-plugin": "~2.0",
-        "metamodels/core":"~2.0"
-    },
-    "require-dev": {
-        "cyberspectrum/contao-toolbox": "~0.6",
-        "phpcq/all-tasks": "~1.0"
+        "contao/core-bundle": "^3.5.2 || ~4.1",
     },
     "conflict": {
         "contao/core": "4.0"
