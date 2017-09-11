@@ -14,7 +14,7 @@ $GLOBALS['TL_LANG']['tl_metamodel_filtersetting']['mode']['0']		= 'Mode';
 $GLOBALS['TL_LANG']['tl_metamodel_filtersetting']['mode']['1']		= '<b>datepicker:</b><br>render a inputfield with datepicker.<br><br><b>groups:</b><br>render a selectfeld with month/year options.';
 
 $GLOBALS['TL_LANG']['tl_metamodel_filtersetting']['dateFormatPattern']['0'] = 'date pattern';
-$GLOBALS['TL_LANG']['tl_metamodel_filtersetting']['dateFormatPattern']['1'] = 'refer to php-function date() and chose your pattern here. (only for mode groups)<br>(e.g. F Y for Feburary 2015)';
+$GLOBALS['TL_LANG']['tl_metamodel_filtersetting']['dateFormatPattern']['1'] = 'refer to php-function strftime() and chose your pattern here. (only for mode groups)<br>(e.g. %B %Y for Feburary 2015)';
 
 $GLOBALS['TL_LANG']['tl_metamodel_filtersetting']['placeholderAttr1']['0'] = 'placeholder for attribute 1 (only datepicker mode)';
 $GLOBALS['TL_LANG']['tl_metamodel_filtersetting']['placeholderAttr2']['0'] = 'placeholder for attribute 2 (only datepicker mode)';

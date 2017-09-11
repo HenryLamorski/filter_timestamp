@@ -14,7 +14,7 @@ $GLOBALS['TL_LANG']['tl_metamodel_filtersetting']['mode']['0']		= 'Betriebsart';
 $GLOBALS['TL_LANG']['tl_metamodel_filtersetting']['mode']['1']		= '<b>datepicker:</b><br>erzeugt ein Inputfeld mit Datepicker.<br><br><b>groups:</b><br>erzeugt ein Selectfeld, alle Daten werden nach Monat/Jahr gruppiert';
 
 $GLOBALS['TL_LANG']['tl_metamodel_filtersetting']['dateFormatPattern']['0'] = 'Datumsmuster';
-$GLOBALS['TL_LANG']['tl_metamodel_filtersetting']['dateFormatPattern']['1'] = 'Nach welchem PHP date()-Muster soll die Formatierung im Betriebsmodus "groups" vorgenommen werden?<br>(z.B. F Y für Monat Jahr)';
+$GLOBALS['TL_LANG']['tl_metamodel_filtersetting']['dateFormatPattern']['1'] = 'Nach welchem PHP strftime()-Muster soll die Formatierung im Betriebsmodus "groups" vorgenommen werden?<br>(z.B. %B %Y für Monat Jahr)';
 
 $GLOBALS['TL_LANG']['tl_metamodel_filtersetting']['placeholderAttr1']['0'] = 'Placeholder für Attribut 1';
 $GLOBALS['TL_LANG']['tl_metamodel_filtersetting']['placeholderAttr2']['0'] = 'Placeholder für Attribut 2';

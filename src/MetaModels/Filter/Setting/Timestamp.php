@@ -100,7 +100,14 @@ class Timestamp extends SimpleLookup
         $arrJumpTo,
         FrontendFilterOptions $objFrontendFilterOptions
     ) {
-
+		
+		if(
+			isset($GLOBALS['TL_CONFIG']['locale'])
+			&& $GLOBALS['TL_CONFIG']['locale']
+		) {
+			setlocale(LC_TIME, $GLOBALS['TL_CONFIG']['locale']);
+		}
+		
         $objAttribute  = $this->getMetaModel()->getAttributeById($this->get('attr_id'));
         $objAttribute2 = $this->getMetaModel()->getAttributeById($this->get('attr_id2'));
 
@@ -112,7 +119,7 @@ class Timestamp extends SimpleLookup
                 $start = $objMm->get($objAttribute->getColName());
 
                 if (!$objAttribute2) {
-                    $arrOptions[mktime(0, 0, 0, date('n', $start), 1, date('Y', $start))] = date(
+                    $arrOptions[mktime(0, 0, 0, date('n', $start), 1, date('Y', $start))] = strftime(
                         $this->get('dateFormatPattern'),
                         mktime(0, 0, 0, date('n', $start), 1, date('Y', $start))
                     );
@@ -122,7 +129,7 @@ class Timestamp extends SimpleLookup
                 $end = $objMm->get($objAttribute2->getColName());
 
                 for ($i = $start; $i < $end; $i = mktime(0, 0, 0, (date('n', $i) + 1), 1, date('Y', $i))) {
-                    $arrOptions[mktime(0, 0, 0, date('n', $i), 1, date('Y', $i))] = date(
+                    $arrOptions[mktime(0, 0, 0, date('n', $i), 1, date('Y', $i))] = strftime(
                         $this->get('dateFormatPattern'),
                         mktime(0, 0, 0, date('n', $i), 1, date('Y', $i))
                     );
